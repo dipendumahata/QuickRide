@@ -5,18 +5,26 @@ import 'remixicon/fonts/remixicon.css'
 import LocationSearchPanel from '../components/LocationSearchPanel'
 import VehiclePanel from '../components/VehiclePanel'
 import ConfirmRide from '../components/ConfirmRide'
+import LookingForDriver from '../components/LookingForDriver'
+import WaitingForDriver from '../components/WaitingForDriver'
 
 
 const Home = () => {
   const [pickup, setPickup] = useState('')
   const [destination, setDestination] = useState('')
   const [panelOpen, setPanelOpen] = useState(false)
+
   const vehiclePanelRef = useRef(null)
+  const vehicleFoundRef = useRef(null)
   const confirmRidePanelRef = useRef(null)
+  const WaitingForDriverRef = useRef(null)
   const panelRef = useRef(null)
   const panelCloseRef = useRef(null)
+
   const [vehiclePanel, setVehiclePanel] = useState(false)
   const [confirmRidePanel, setConfirmRidePanel] = useState(false)
+  const [vehicleFound, setVehicleFound] = useState(false)
+  const [waitingForDriver, setWaitingForDriver] = useState(false)
   
   const submitHandler = (e) => {
     e.preventDefault()
@@ -71,6 +79,33 @@ const Home = () => {
     }
   },[confirmRidePanel])
 
+  useGSAP(function(){ 
+    if(vehicleFound){
+      gsap.to(vehicleFoundRef.current, {
+        transform: 'translateY(0%)',
+        // opacity: 1
+      })
+    }else{
+      gsap.to(vehicleFoundRef.current, {
+        transform: 'translateY(100%)',
+        // opacity: 0
+      })
+    }
+  },[vehicleFound])
+
+  useGSAP(function(){ 
+    if(waitingForDriver){
+      gsap.to(WaitingForDriverRef.current, {
+        transform: 'translateY(0%)',
+        // opacity: 1
+      })
+    }else{
+      gsap.to(WaitingForDriverRef.current, {
+        transform: 'translateY(100%)',
+        // opacity: 0
+      })
+    }
+  },[waitingForDriver])
 
   return (
     <div className='h-screen relative overflow-hidden'>
@@ -126,7 +161,13 @@ const Home = () => {
         <VehiclePanel setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel}/>
       </div>
       <div ref={confirmRidePanelRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-14 '>
-        <ConfirmRide setConfirmRidePanel={setConfirmRidePanel}/>
+        <ConfirmRide setConfirmRidePanel={setConfirmRidePanel} setVehicleFound={setVehicleFound}/>
+      </div>
+      <div ref={vehicleFoundRef} className='fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-14 '>
+        <LookingForDriver setVehicleFound={setVehicleFound} />
+      </div>
+      <div ref={WaitingForDriverRef} className='fixed w-full z-10 bottom-0 bg-white px-3 py-10 pt-14 '>
+        <WaitingForDriver setWaitingForDriver={setWaitingForDriver}/>
       </div>
     </div>
   )
